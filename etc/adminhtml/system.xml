@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="dbtalker" translate="label" sortOrder="500">
+            <label>DBTalker</label>
+        </tab>
+        <section id="dbtalker" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Configuration</label>
+            <tab>dbtalker</tab>
+            <resource>DBTalker_Connector::config</resource>
+            
+            <!-- General Settings -->
+            <group id="general" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General Settings</label>
+                <field id="enabled_general" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="api_key" translate="label" type="obscure" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>API Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <comment>Enter your DBTalker API key from your account dashboard.</comment>
+                </field>
+
+                <field id="sync_schema" translate="label" type="button" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Sync Database Schema</label>
+                    <frontend_model>DBTalker\Connector\Block\Adminhtml\System\Config\SyncSchema</frontend_model>
+                    <comment>Click to synchronize your database schema with DBTalker. This only shares table and column names, not actual data.</comment>
+                </field>
+
+                <field id="last_sync" translate="label" type="label" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Last Sync</label>
+                    <frontend_model>DBTalker\Connector\Block\Adminhtml\System\Config\LastSync</frontend_model>
+                </field>
+            </group>
+
+            <!-- Widget Settings -->
+            <group id="widget" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Chat Widget</label>
+                <field id="enabled_widget" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable Chat Widget</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Enable the DBTalker chat widget in the admin panel.</comment>
+                </field>
+                <field id="position" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Widget Position</label>
+                    <source_model>DBTalker\Connector\Model\Config\Source\Position</source_model>
+                    <depends>
+                        <field id="enabled_widget">1</field>
+                    </depends>
+                </field>
+            </group>
+
+            <!-- Security Settings -->
+            <group id="security" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Security Settings</label>
+                <field id="allowed_tables" translate="label" type="multiselect" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Allowed Tables</label>
+                    <source_model>DBTalker\Connector\Model\Config\Source\Tables</source_model>
+                    <comment>Leave empty to allow all tables or select specific tables to restrict access.</comment>
+                </field>
+                <field id="excluded_tables" translate="label" type="multiselect" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Excluded Tables</label>
+                    <source_model>DBTalker\Connector\Model\Config\Source\Tables</source_model>
+                    <comment>Select tables to exclude from DBTalker access.</comment>
+                </field>
+                <field id="max_query_time" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Maximum Query Execution Time (seconds)</label>
+                    <validate>validate-number</validate>
+                    <comment>Maximum time in seconds that a query is allowed to run. Set to 0 for no limit.</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

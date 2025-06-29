@@ -1,0 +1,87 @@
+<?php if ($block->isEnabled() && $block->getApiKey()): ?>
+    <style>
+        #dbtalker-widget {
+            position: fixed;
+            <?php if ($block->getPosition() == 'left'): ?>
+                left: 20px;
+            <?php else: ?>
+                right: 20px;
+            <?php endif; ?>
+            bottom: 20px;
+            width: 400px;
+            height: 500px;
+            border: none;
+            z-index: 9999;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            transition: height 0.3s ease;
+            background: white;
+        }
+        
+        #dbtalker-widget.minimized {
+            height: 50px !important;
+        }
+    </style>
+
+    <iframe
+        id="dbtalker-widget"
+        src="http://localhost:3001/widget?apiKey=<?php echo $block->escapeHtml($block->getApiKey()); ?>&position=<?php echo $block->escapeHtml($block->getPosition()); ?>&theme=light&primaryColor=3B82F6">
+    </iframe>
+
+    <script>
+        (function() {
+            const iframe = document.getElementById('dbtalker-widget');
+            let isMinimized = false;
+            
+            // Listen for messages from the widget iframe
+            window.addEventListener('message', function(event) {
+                // Validate origin for security
+                if (event.origin !== 'http://localhost:3001' && 
+                    event.origin !== 'https://widget.dbtalker.com') {
+                    return;
+                }
+                
+                // Handle resize messages
+                if (event.data.type === 'RESIZE_WIDGET') {
+                    const newHeight = event.data.height + 'px';
+                    const minimized = event.data.minimized;
+                    
+                    // Update iframe height
+                    iframe.style.height = newHeight;
+                    
+                    // Add/remove minimized class for additional styling
+                    if (minimized) {
+                        iframe.classList.add('minimized');
+                    } else {
+                        iframe.classList.remove('minimized');
+                    }
+                    
+                    isMinimized = minimized;
+                    
+                    console.log('DBTalker Magento: Iframe resized to', newHeight, 'minimized:', minimized);
+                }
+                
+                // Handle close widget messages
+                if (event.data.type === 'CLOSE_WIDGET') {
+                    iframe.style.display = 'none';
+                    console.log('DBTalker Magento: Widget closed');
+                }
+            });
+            
+            // Optional: Add a way to show the widget again if it was closed
+            // You could add a button or other trigger here
+            window.showDBTalkerWidget = function() {
+                iframe.style.display = 'block';
+                if (isMinimized) {
+                    iframe.style.height = '50px';
+                    iframe.classList.add('minimized');
+                } else {
+                    iframe.style.height = '500px';
+                    iframe.classList.remove('minimized');
+                }
+            };
+            
+            console.log('DBTalker Magento: Widget integration loaded');
+        })();
+    </script>
+<?php endif; ?>

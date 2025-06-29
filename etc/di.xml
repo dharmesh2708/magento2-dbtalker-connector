@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="DBTalker\Connector\Api\QueryManagementInterface" type="DBTalker\Connector\Model\DbTalker" />
+    <preference for="DBTalker\Connector\Api\Data\QueryRequestInterface" type="DBTalker\Connector\Model\QueryRequest" />
+    <type name="DBTalker\Connector\Api\Data\QueryResultItemInterface">
+        <arguments>
+            <argument name="data" xsi:type="array" />
+        </arguments>
+    </type>
+</config>
