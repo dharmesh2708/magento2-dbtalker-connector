@@ -33,9 +33,15 @@ This extension integrates your store with the [DBTalker](https://dbtalker.com) p
 
 2. Run Magento CLI commands:
 
-bin/magento module:enable DBTalker_Chatbot
-bin/magento setup:upgrade
-bin/magento cache:flush
+php bin/magento setup:upgrade
+
+php bin/magento setup:di:compile
+
+php bin/magento module:enable DBTalker_Chatbot
+
+php bin/magento setup:static-content:deploy
+
+php bin/magento cache:flush
 
 
 ⚙️ Configuration Steps
