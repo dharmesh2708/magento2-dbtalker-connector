@@ -5,6 +5,7 @@ use Magento\Backend\Block\Template\Context;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Backend\Block\Template;
 use Magento\Framework\Encryption\EncryptorInterface;
+use Magento\Backend\Model\Auth\Session as AdminSession;
 
 class Widget extends Template
 {
@@ -13,30 +14,36 @@ class Widget extends Template
     const XML_PATH_POSITION = 'dbtalker/widget/position';
 
     protected $scopeConfig;
-
     protected $encryptor;
+    protected $adminSession;
 
     public function __construct(
         Context $context,
         ScopeConfigInterface $scopeConfig,
         EncryptorInterface $encryptor,
+        AdminSession $adminSession,
         array $data = []
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->encryptor = $encryptor;
+        $this->adminSession = $adminSession;
         parent::__construct($context, $data);
     }
 
     public function isEnabled()
     {
-        return $this->scopeConfig->isSetFlag(self::XML_PATH_ENABLED);
+        return $this->isAdminLoggedIn() && $this->scopeConfig->isSetFlag(self::XML_PATH_ENABLED);
+    }
+
+    public function isAdminLoggedIn()
+    {
+        return $this->adminSession->isLoggedIn();
     }
 
     public function getApiKey()
     {
         $encryptedToken = $this->scopeConfig->getValue(self::XML_PATH_API_KEY);
-        $authToken = $this->encryptor->decrypt($encryptedToken);
-        return $authToken;
+        return $encryptedToken ? $this->encryptor->decrypt($encryptedToken) : null;
     }
 
     public function getPosition()
