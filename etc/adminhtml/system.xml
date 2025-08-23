@@ -52,6 +52,43 @@
                         <field id="enabled_widget">1</field>
                     </depends>
                 </field>
+                <field id="header_color" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Widget Header Color</label>
+                    <frontend_model>DBTalker\Connector\Block\Adminhtml\System\Config\Color</frontend_model>
+                    <comment>Choose the header background color for the chat widget</comment>
+                    <depends>
+                        <field id="enabled_widget">1</field>
+                    </depends>
+                </field>
+                <field id="theme_color" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Widget Theme Color</label>
+                    <frontend_model>DBTalker\Connector\Block\Adminhtml\System\Config\Color</frontend_model>
+                    <comment>Choose the primary theme color for the chat widget</comment>
+                    <depends>
+                        <field id="enabled_widget">1</field>
+                    </depends>
+                </field>
+                <field id="store_logo" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Store Logo URL</label>
+                    <comment>URL to your store logo image (optional). If not provided, store name will be displayed.</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="greeting_message_frotnend" translate="label" type="textarea" sortOrder="60" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Greeting Message Frotnend</label>
+                    <comment>Message that will be shown when the chat widget opens (e.g., “Hi! How can I help you today?”).</comment>
+                    <depends>
+                        <field id="enabled_widget">1</field>
+                    </depends>
+                </field>
+                <field id="greeting_message_admin" translate="label" type="textarea" sortOrder="70" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Greeting Message Admin</label>
+                    <comment>Message that will be shown when the chat widget opens (e.g., “Hi! How can I help you today?”).</comment>
+                    <depends>
+                        <field id="enabled_widget">1</field>
+                    </depends>
+                </field>
             </group>
 
             <!-- Security Settings -->

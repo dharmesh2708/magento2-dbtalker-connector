@@ -1,47 +1,41 @@
 <?php
-namespace DBTalker\Connector\Block\Adminhtml;
+namespace DBTalker\Connector\Block;
 
-use Magento\Backend\Block\Template\Context;
+use Magento\Framework\View\Element\Template;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Backend\Block\Template;
 use Magento\Framework\Encryption\EncryptorInterface;
-use Magento\Backend\Model\Auth\Session as AdminSession;
+use Magento\Customer\Model\Session as CustomerSession;
 use DBTalker\Connector\Helper\Data as HelperData;
 
 class Widget extends Template
 {
-    const XML_PATH_ENABLED = 'dbtalker/widget/enabled_widget';
-    const XML_PATH_API_KEY = 'dbtalker/general/api_key';
-    const XML_PATH_POSITION = 'dbtalker/widget/position';
+    const XML_PATH_ENABLED   = 'dbtalker/widget/enabled_widget';
+    const XML_PATH_API_KEY   = 'dbtalker/general/api_key';
+    const XML_PATH_POSITION  = 'dbtalker/widget/position';
 
     protected $scopeConfig;
     protected $encryptor;
-    protected $adminSession;
+    protected $customerSession;
     protected $helper;
 
     public function __construct(
-        Context $context,
+        Template\Context $context,
         ScopeConfigInterface $scopeConfig,
         EncryptorInterface $encryptor,
-        AdminSession $adminSession,
+        CustomerSession $customerSession,
         HelperData $helper,
         array $data = []
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->encryptor = $encryptor;
-        $this->adminSession = $adminSession;
+        $this->customerSession = $customerSession;
         $this->helper = $helper;
         parent::__construct($context, $data);
     }
 
     public function isEnabled()
     {
-        return $this->isAdminLoggedIn() && $this->scopeConfig->isSetFlag(self::XML_PATH_ENABLED);
-    }
-
-    public function isAdminLoggedIn()
-    {
-        return $this->adminSession->isLoggedIn();
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_ENABLED);
     }
 
     public function getApiKey()
@@ -57,14 +51,15 @@ class Widget extends Template
 
     public function getUserInfo()
     {
-        $user = $this->adminSession->getUser();
-        if ($user && $user->getId()) {
+        if ($this->customerSession->isLoggedIn()) {
+            $customer = $this->customerSession->getCustomer();
             return [
-                'email' => $user->getEmail(),
-                'role' => 'admin'
+                'isLoggedIn' => true,
+                'role' => 'customer',
+                'email' => $customer->getEmail()
             ];
         }
-        return ['email' => '', 'role' => 'admin'];
+        return ['isLoggedIn' => false, 'role' => 'guest'];
     }
 
     public function getHeaderColor()
@@ -84,8 +79,8 @@ class Widget extends Template
         return $this->helper->getStoreLogo();
     }
 
-    public function getAdminGreetingMessage()
+    public function getFrontendGreetingMessage()
     {
-        return $this->helper->getAdminGreetingMessage();
+        return $this->helper->getFrontendGreetingMessage();
     }
 }

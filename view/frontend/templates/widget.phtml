@@ -1,6 +1,6 @@
 <?php if ($block->isEnabled() && $block->getApiKey()): ?>
     <?php
-        $userInfo = $block->getUserInfo(); // This returns ['email' => ..., 'role' => ...]
+        $userInfo = $block->getUserInfo(); // Returns ['role' => guest/customer/admin, ...]
         $queryParams = http_build_query([
             'apiKey' => $block->getApiKey(),
             'position' => $block->getPosition(),
@@ -8,8 +8,8 @@
             'primaryColor' => $block->getThemeColor(),
             'headerColor'  => $block->getHeaderColor(),
             'storeLogo'    => $block->getStoreLogo(),
-            'chatbotassistInit'    => $block->getAdminGreetingMessage(),
-            'userEmail' => $userInfo['email'],
+            'chatbotassistInit'    => $block->getFrontendGreetingMessage(),
+            'userEmail' => $userInfo['email'] ?? '',
             'role' => $userInfo['role'],
         ]);
     ?>
@@ -40,9 +40,9 @@
 
     <iframe
         id="dbtalker-widget"
-        src="http://localhost:3001/widget?<?= $block->escapeHtml($queryParams) ?>"
-        data-user-email="<?= $block->escapeHtml($userInfo['email']) ?>"
-        data-role="<?= $block->escapeHtml($userInfo['role']) ?>">
+        src="http://localhost:3001/widget?<?= $queryParams ?>"
+        data-role="<?= $userInfo['role'] ?>"
+        data-user-email="<?= $userInfo['email'] ?? '' ?>">
     </iframe>
 
     <script>
@@ -50,24 +50,21 @@
             const iframe = document.getElementById('dbtalker-widget');
             let isMinimized = false;
 
-            // Send user info to iframe
+            // Send user info to iframe after it loads
             iframe.onload = function () {
                 iframe.contentWindow.postMessage({
                     type: 'USER_INFO',
-                    email: iframe.dataset.userEmail,
-                    role: iframe.dataset.role
+                    role: iframe.dataset.role,
+                    email: iframe.dataset.userEmail
                 }, '*');
             };
 
-            // Listen for messages from the widget iframe
             window.addEventListener('message', function(event) {
-                // Validate origin for security
-                if (event.origin !== 'http://localhost:3001' && 
+                if (event.origin !== 'http://localhost:3001' &&
                     event.origin !== 'https://widget.dbtalker.com') {
                     return;
                 }
 
-                // Handle resize messages
                 if (event.data.type === 'RESIZE_WIDGET') {
                     const newHeight = event.data.height + 'px';
                     const minimized = event.data.minimized;
@@ -81,6 +78,7 @@
                     }
 
                     isMinimized = minimized;
+
                     console.log('DBTalker Magento: Iframe resized to', newHeight, 'minimized:', minimized);
                 }
 
@@ -90,7 +88,7 @@
                 }
             });
 
-            window.showDBTalkerWidget = function() {
+            window.showDBTalkerWidget = function () {
                 iframe.style.display = 'block';
                 if (isMinimized) {
                     iframe.style.height = '50px';
